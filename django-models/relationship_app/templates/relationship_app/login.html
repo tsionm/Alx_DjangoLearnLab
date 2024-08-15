@@ -1,9 +1,11 @@
+<!-- login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body>
     <h1>Login</h1>
@@ -12,7 +14,6 @@
         {{ form.as_p }}
         <button type="submit">Login</button>
     </form>
-    <a href="{% url 'register' %}">Register</a>
 </body>
 </html>
 
