@@ -17,24 +17,34 @@ class LibraryDetailView(DetailView):
     context_object_name = 'library'
 
 
-# Login view using Django's built-in authentication views
-class LoginView(auth_views.LoginView):
-    template_name = 'relationship_app/login.html'
-
-# Logout view using Django's built-in authentication views
-class LogoutView(auth_views.LogoutView):
-    template_name = 'relationship_app/logout.html'
-
-# Registration view for new users
+# Function-based view for user registration
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save()
+            auth_login(request, user)  # Log in the user after registration
+            return redirect('list_books')
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
