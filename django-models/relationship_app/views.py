@@ -10,7 +10,7 @@ def list_books(request):
 # Class-based view to display details of a specific library
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'lrelationship_app/ibrary_detail.html'
+    template_name = 'relationship_app/ibrary_detail.html'
     context_object_name = 'library'
 
 
