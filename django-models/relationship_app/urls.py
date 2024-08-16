@@ -12,10 +12,11 @@ from .views import profile_view
 #     path('register/', register, name='register'),
 
 # ]
+
 urlpatterns = [
     path('login/', LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
-    path('logout/', LogoutView.as_view(template_name='relationship_app/logout'), name='logout'),
+    path('logout/', LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),
     path('register/', register, name='register'),
-    path('profile/', profile_view, name='profile'),  # Assuming you have a profile view
+    path('profile/', profile_view, name='profile'),  # Profile view
 ]
 
