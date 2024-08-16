@@ -3,9 +3,10 @@ from django.views.generic.detail import DetailView
 from .models import Book
 from .models import Library
 from django.shortcuts import render, redirect
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView, LogoutView
+
 def list_books(request):
     books = Book.objects.all()
     return render(request, 'relationship_app/list_books.html', {'books': books})
@@ -17,24 +18,32 @@ class LibraryDetailView(DetailView):
     context_object_name = 'library'
 
 
-# Function-based view for user registration
+# Custom registration view
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user)  # Log in the user after registration
-            return redirect('list_books')
+            login(request, user)
+            return redirect('profile')  # Redirect to a profile or home page after registration
     else:
         form = UserCreationForm()
-    return render(request, 'relationship_app/register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
 
 
 
+# # @login_required
+# def profile_view(request):
+#     return render(request, 'relationship_app/profile.html')
+def profile_view(request):
+    return render(request, 'profile.html')
 
+# Use Django's built-in LoginView and LogoutView
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
 
-
-
+class CustomLogoutView(LogoutView):
+    next_page = '/relationship/login/'  # Redirect to login after logout
 
 
 
