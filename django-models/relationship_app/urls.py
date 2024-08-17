@@ -25,7 +25,11 @@ urlpatterns = [
     path('books/add/', views.add_book, name='add_book'),
     path('books/edit/<int:book_id>/', views.edit_book, name='edit_book'),
     path('books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
-    # Other URL patterns...
+    path('add_book/', views.add_book_view, name='add_book'),  # URL for adding a book
+    path('edit_book/<int:pk>/', views.edit_book_view, name='edit_book'),  # URL for editing a book
+    # Add other URL patterns as needed
+    # Other URL patterns...python manage.py makemigrations
+
 
 ]
 

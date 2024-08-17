@@ -20,6 +20,29 @@ def list_books(request):
     return render(request, 'relationship_app/list_books.html', {'books': books})
 
 
+@permission_required('relationship_app.can_add_book')
+def add_book_view(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('success_page')  # Redirect to a success page or another page
+    else:
+        form = BookForm()
+    return render(request, 'add_book.html', {'form': form})
+
+@permission_required('relationship_app.can_change_book')
+def edit_book_view(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    if request.method == 'POST':
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect('success_page')  # Redirect to a success page or another page
+    else:
+        form = BookForm(instance=book)
+    return render(request, 'edit_book.html', {'form': form})
+
     # View to add a new book
 @permission_required('relationship_app.can_add_book')
 def add_book(request):
