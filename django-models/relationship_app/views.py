@@ -34,7 +34,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # Automatically log the user in after registration
-            return redirect('home')  # Redirect to the homepage or any other page after registration
+            return redirect('profile')  # Redirect to the homepage or any other page after registration
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
