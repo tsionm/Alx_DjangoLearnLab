@@ -18,17 +18,26 @@ class LibraryDetailView(DetailView):
     context_object_name = 'library'
 
 
+# def register(request):
+#     if request.method == 'POST':
+#         form = UserCreationForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             login(request, user)
+#             return redirect('profile')  # Redirect to the profile page after registration
+#     else:
+#         form = UserCreationForm()
+#     return render(request, 'relationship_app/register.html', {'form': form})
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            return redirect('profile')  # Redirect to the profile page after registration
+            login(request, user)  # Automatically log the user in after registration
+            return redirect('home')  # Redirect to the homepage or any other page after registration
     else:
         form = UserCreationForm()
-    return render(request, 'relationship_app/register.html', {'form': form})
-
+    return render(request, 'register.html', {'form': form})
 
 
 # # @login_required
