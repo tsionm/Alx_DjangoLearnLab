@@ -38,6 +38,23 @@ SESSION_COOKIE_SECURE = True  # Ensure session cookies are only sent over HTTPS
 
 ALLOWED_HOSTS = []
 
+# Redirect all non-HTTPS requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Use the HTTP Strict Transport Security (HSTS) header to tell browsers to only use HTTPS
+SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Secure cookies to be transmitted only over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Implement additional secure headers
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
 
 # Application definition
 
