@@ -7,6 +7,20 @@ from django.http import HttpResponse
 from django.db.models import Q
 from .models import Book
 from .forms import BookForm
+from django.shortcuts import render
+from .forms import ExampleForm
+
+
+def example_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process form data here
+            return HttpResponse("Form submitted successfully!")
+    else:
+        form = ExampleForm()
+    
+    return render(request, 'bookshelf/form_example.html', {'form': form})
 
 @permission_required('bookshelf.can_view', raise_exception=True)
 def view_book(request, book_id):
