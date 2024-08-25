@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'relationship_app.CustomUser'
 
 MIDDLEWARE = [
+    'csp.middleware.CSPMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -56,6 +57,14 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Define your Content Security Policy
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", 'https://fonts.googleapis.com')
+CSP_SCRIPT_SRC = ("'self'", 'https://cdnjs.cloudflare.com')
+CSP_IMG_SRC = ("'self'", 'data:', 'https://images.com')  # Adjust based on your needs
+CSP_CONNECT_SRC = ("'self'",)
+CSP_FRAME_SRC = ("'none'",)
 
 ROOT_URLCONF = "LibraryProject.urls"
 

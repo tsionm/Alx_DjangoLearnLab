@@ -23,7 +23,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-)p09kftn@xrag8h5c+67hw*zx0__ce@o2nkp-jkz85xwd2ml(("
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+# LibraryProject/settings.py
+
+# Set DEBUG to False in production
+DEBUG = False
+
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+CSRF_COOKIE_SECURE = True  # Ensure CSRF cookies are only sent over HTTPS
+SESSION_COOKIE_SECURE = True  # Ensure session cookies are only sent over HTTPS
 
 ALLOWED_HOSTS = []
 
