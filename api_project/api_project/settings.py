@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'rest_framework',
+    'rest_framework.authtoken', # Token Authentication
     'api',
 ]
 
@@ -68,6 +69,19 @@ TEMPLATES = [
         },
     },
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # Token Authentication
+        'rest_framework.authentication.SessionAuthentication', # Optional: Keep this for the admin site
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Restrict access to authenticated users by default
+    ],
+}
+
+
 
 WSGI_APPLICATION = "api_project.wsgi.application"
 
