@@ -1,5 +1,5 @@
 <h2>Blog Posts</h2>
-<a href="{% url 'post-create' %}">Create New Post</a>
+<a href="{% url 'post-update' post.pk %}">Edit</a>
 <ul>
     {% for post in posts %}
         <li>
