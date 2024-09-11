@@ -1,3 +1,6 @@
+from django.contrib import admin
+from django.urls import path, include  # Ensure 'include' is imported here
+
 """
 URL configuration for django_blog project.
 
