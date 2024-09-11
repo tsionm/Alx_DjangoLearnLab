@@ -42,43 +42,25 @@ def edit_profile(request):
     return render(request, 'blog/edit_profile.html', {'form': form})
 
 
-# ListView to display all posts
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/post_list.html'  # Your template for listing posts
-    context_object_name = 'posts'
-    ordering = ['-published_date']  # Order posts by the most recent
+    template_name = 'blog/post_list.html'
 
-# DetailView to show individual post details
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
 
-# CreateView to allow users to create new posts
-class PostCreateView(LoginRequiredMixin, CreateView):
+class PostCreateView(CreateView):
     model = Post
     fields = ['title', 'content']
     template_name = 'blog/post_form.html'
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user  # Set the logged-in user as the author
-        return super().form_valid(form)
-
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class PostUpdateView(UpdateView):
     model = Post
     fields = ['title', 'content']
     template_name = 'blog/post_form.html'
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user  # Ensure the logged-in user is set as author
-        return super().form_valid(form)
-
-    def test_func(self):
-        post = self.get_object()
-        return self.request.user == post.author  # Only allow the author to update
-
 
 class PostDeleteView(DeleteView):
     model = Post
-    success_url = reverse_lazy('post-list')  # Redirect to post list after deletion
+    success_url = reverse_lazy('post-list')
     template_name = 'blog/post_confirm_delete.html'
