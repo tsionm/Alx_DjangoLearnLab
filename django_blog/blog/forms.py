@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post
 from .models import Comment
+from taggit.forms import TagWidget
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -31,6 +32,8 @@ class CommentForm(forms.ModelForm):
         fields = ['content']
 
 class PostForm(forms.ModelForm):
+    tags = forms.CharField(widget=TagWidget(), required=False)
+
     class Meta:
         model = Post
-        fields = ['title', 'content', 'tags']  # Ensure these fields exist in the Post model
+        fields = ['title', 'content', 'tags']  # Include tags in fields
