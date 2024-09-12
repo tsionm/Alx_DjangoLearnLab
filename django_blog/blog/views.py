@@ -119,3 +119,22 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Comment.objects.filter(author=self.request.user)
+
+
+def search(request):
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) | 
+            Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        posts = Post.objects.none()
+
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+
+def posts_by_tag(request, tag_name):
+    posts = Post.objects.filter(tags__name=tag_name)
+    return render(request, 'blog/tagged_posts.html', {'posts': posts, 'tag_name': tag_name})
