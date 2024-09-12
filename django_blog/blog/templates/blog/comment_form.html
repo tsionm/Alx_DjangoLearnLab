@@ -1,7 +1,19 @@
-<!-- blog/templates/blog/comment_form.html -->
+<!-- blog/templates/blog/comment_form.html
 <h1>Edit Comment</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save Changes</button>
-</form>
+</form> -->
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h2>New Comment</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Comment</button>
+  </form>
+  <a href="{% url 'post-detail' pk=object.post.pk %}">Back to Post</a>
+{% endblock %}
