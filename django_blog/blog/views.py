@@ -12,6 +12,9 @@ from .models import Post
 from django.views.generic import UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post
+from .models import Post, Comment
+from .forms import CommentForm
+from django.urls import reverse_lazy
 
 # Create your views here.
 def register(request):
@@ -49,6 +52,11 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        context['comment_form'] = CommentForm()
+        return context
 
 class PostCreateView(CreateView):
     model = Post
@@ -64,3 +72,35 @@ class PostDeleteView(DeleteView):
     model = Post
     success_url = reverse_lazy('post-list')
     template_name = 'blog/post_confirm_delete.html'
+
+
+class CommentCreateView(LoginRequiredMixin, View):
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+        return redirect('post-detail', pk=post_id)
+
+class CommentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
