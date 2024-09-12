@@ -20,10 +20,10 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = ['username', 'email']
 
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['title', 'content']
+# class PostForm(forms.ModelForm):
+#     class Meta:
+#         model = Post
+#         fields = ['title', 'content']
 
 
 class CommentForm(forms.ModelForm):
