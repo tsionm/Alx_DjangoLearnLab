@@ -51,8 +51,8 @@ class FollowUserView(generics.UpdateAPIView):
     
     def update(self, request, *args, **kwargs):
         user_to_follow = self.get_object()
-        request.user.following.add(user_to_follow)  # Assuming you have a ManyToMany field 'following'
-        return Response({'status': 'user followed'}, status=200)
+        request.user.following.add(user_to_follow)  # Add user to following
+        return Response({'status': 'user followed'}, status=status.HTTP_200_OK)
 
 class UnfollowUserView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
@@ -60,5 +60,5 @@ class UnfollowUserView(generics.UpdateAPIView):
     
     def update(self, request, *args, **kwargs):
         user_to_unfollow = self.get_object()
-        request.user.following.remove(user_to_unfollow)  # Assuming you have a ManyToMany field 'following'
-        return Response({'status': 'user unfollowed'}, status=200)
+        request.user.following.remove(user_to_unfollow)  # Remove user from following
+        return Response({'status': 'user unfollowed'}, status=status.HTTP_200_OK)
