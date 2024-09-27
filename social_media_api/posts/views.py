@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from rest_framework import generics, permissions
 from .models import Post  # Make sure you have a Post model
@@ -11,6 +12,11 @@ from rest_framework.response import Response
 from .models import Post, Like
 from .serializers import PostSerializer
 from notifications.models import Notification
+from django.shortcuts import get_object_or_404
+
+
+User = get_user_model()
+
 
 class FeedView(APIView):
     permission_classes = [IsAuthenticated]
@@ -50,32 +56,39 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class LikePostView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-    def post(self, request, post_id):
-        post = get_object_or_404(Post, id=post_id)
-        like, created = Like.objects.get_or_create(user=request.user, post=post)
+    def post(self, request, pk):
+        """Like a post."""
+        post = get_object_or_404(Post, pk=pk)  # Use django.shortcuts.get_object_or_404
 
-        if created:  # New like
-            # Create a notification
-            notification = Notification.objects.create(
-                recipient=post.author,  # Assuming Post has an author field
-                actor=request.user,
-                verb='liked your post',
-                target=post
-            )
-            return Response({'detail': 'Post liked.'}, status=status.HTTP_201_CREATED)
-        return Response({'detail': 'Post already liked.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Check if the user has already liked the post
+        if Like.objects.filter(user=request.user, post=post).exists():
+            return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new Like entry
+        Like.objects.create(user=request.user, post=post)
+
+        # Optionally, you can create a notification here as well
+
+        return Response({'detail': 'Post liked successfully!'}, status=status.HTTP_201_CREATED)
+
 
 class UnlikePostView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-    def post(self, request, post_id):
-        post = get_object_or_404(Post, id=post_id)
-        try:
-            like = Like.objects.get(user=request.user, post=post)
-            like.delete()
-            return Response({'detail': 'Post unliked.'}, status=status.HTTP_204_NO_CONTENT)
-        except Like.DoesNotExist:
-            return Response({'detail': 'Post not liked.'}, status=status.HTTP_400_BAD_REQUEST)
-# Create your views here.
+    def post(self, request, pk):
+        """Unlike a post."""
+        post = get_object_or_404(Post, pk=pk)  # Use django.shortcuts.get_object_or_404
+
+        # Check if the user has liked the post
+        like = Like.objects.filter(user=request.user, post=post).first()
+        if not like:
+            return Response({'detail': 'You have not liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Remove the Like entry
+        like.delete()
+
+        # Optionally, you can create a notification here as well
+
+        return Response({'detail': 'Post unliked successfully!'}, status=status.HTTP_200_OK)
