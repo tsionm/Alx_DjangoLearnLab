@@ -13,7 +13,12 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser  # Ensure your CustomUser model is imported
 from .serializers import UserSerializer  # Import your user serializer
-
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from .models import User
 
 
 
@@ -45,20 +50,37 @@ class LoginView(APIView):
 
 
 
-class FollowUserView(generics.UpdateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = CustomUser.objects.all()
+# class FollowUserView(generics.UpdateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = CustomUser.objects.all()
     
-    def update(self, request, *args, **kwargs):
-        user_to_follow = self.get_object()
-        request.user.following.add(user_to_follow)  # Add user to following
-        return Response({'status': 'user followed'}, status=status.HTTP_200_OK)
+#     def update(self, request, *args, **kwargs):
+#         user_to_follow = self.get_object()
+#         request.user.following.add(user_to_follow)  # Add user to following
+#         return Response({'status': 'user followed'}, status=status.HTTP_200_OK)
 
-class UnfollowUserView(generics.UpdateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = CustomUser.objects.all()
+# class UnfollowUserView(generics.UpdateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = CustomUser.objects.all()
     
-    def update(self, request, *args, **kwargs):
-        user_to_unfollow = self.get_object()
-        request.user.following.remove(user_to_unfollow)  # Remove user from following
-        return Response({'status': 'user unfollowed'}, status=status.HTTP_200_OK)
+#     def update(self, request, *args, **kwargs):
+#         user_to_unfollow = self.get_object()
+#         request.user.following.remove(user_to_unfollow)  # Remove user from following
+#         return Response({'status': 'user unfollowed'}, status=status.HTTP_200_OK)
+class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        """Follow a user."""
+        user_to_follow = get_object_or_404(User, id=user_id)
+        request.user.follow(user_to_follow)
+        return Response({'detail': 'User followed successfully'}, status=status.HTTP_200_OK)
+
+class UnfollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        """Unfollow a user."""
+        user_to_unfollow = get_object_or_404(User, id=user_id)
+        request.user.unfollow(user_to_unfollow)
+        return Response({'detail': 'User unfollowed successfully'}, status=status.HTTP_200_OK)
