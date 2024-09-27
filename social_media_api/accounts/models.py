@@ -1,9 +1,10 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
 
 class User(AbstractUser):
-        following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
 
     def follow(self, user):
         """Follow another user."""
@@ -26,9 +27,24 @@ class User(AbstractUser):
 
 
 class CustomUser(AbstractUser):
-    bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    followers = models.ManyToManyField('self', symmetrical=False, related_name='following')
+    # bio = models.TextField(blank=True, null=True)
+    # profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    # followers = models.ManyToManyField('self', symmetrical=False, related_name='following')
+ # Add a related_name to avoid clashes
+    groups = models.ManyToManyField(
+        Group,
+        related_name="customuser_groups",  # Add this to resolve clash
+        blank=True,
+        help_text="The groups this user belongs to.",
+        verbose_name="groups",
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name="customuser_user_permissions",  # Add this to resolve clash
+        blank=True,
+        help_text="Specific permissions for this user.",
+        verbose_name="user permissions",
+    )
 
     def __str__(self):
         return self.username
