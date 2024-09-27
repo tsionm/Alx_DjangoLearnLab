@@ -7,6 +7,17 @@ from rest_framework import status
 from .models import CustomUser
 from .serializers import UserSerializer, RegisterSerializer, LoginSerializer
 from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, permissions
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import CustomUser  # Ensure your CustomUser model is imported
+from .serializers import UserSerializer  # Import your user serializer
+
+
+
+
+
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -34,5 +45,20 @@ class LoginView(APIView):
 
 
 
+class FollowUserView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()
+    
+    def update(self, request, *args, **kwargs):
+        user_to_follow = self.get_object()
+        request.user.following.add(user_to_follow)  # Assuming you have a ManyToMany field 'following'
+        return Response({'status': 'user followed'}, status=200)
 
-# Create your views here.
+class UnfollowUserView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()
+    
+    def update(self, request, *args, **kwargs):
+        user_to_unfollow = self.get_object()
+        request.user.following.remove(user_to_unfollow)  # Assuming you have a ManyToMany field 'following'
+        return Response({'status': 'user unfollowed'}, status=200)
