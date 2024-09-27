@@ -8,9 +8,9 @@ from .models import Post, Comment
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Post
+from .models import Post, Like
 from .serializers import PostSerializer
-
+from notifications.models import Notification
 
 class FeedView(APIView):
     permission_classes = [IsAuthenticated]
@@ -46,4 +46,36 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can access
 
+
+
+
+class LikePostView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if created:  # New like
+            # Create a notification
+            notification = Notification.objects.create(
+                recipient=post.author,  # Assuming Post has an author field
+                actor=request.user,
+                verb='liked your post',
+                target=post
+            )
+            return Response({'detail': 'Post liked.'}, status=status.HTTP_201_CREATED)
+        return Response({'detail': 'Post already liked.'}, status=status.HTTP_400_BAD_REQUEST)
+
+class UnlikePostView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+            return Response({'detail': 'Post unliked.'}, status=status.HTTP_204_NO_CONTENT)
+        except Like.DoesNotExist:
+            return Response({'detail': 'Post not liked.'}, status=status.HTTP_400_BAD_REQUEST)
 # Create your views here.
