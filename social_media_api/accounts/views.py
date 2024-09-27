@@ -20,6 +20,49 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from .models import User
 from rest_framework.permissions import IsAuthenticated
+from .models import Post, Like
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        """Like a post."""
+        post = get_object_or_404(Post, pk=pk)
+        
+        # Check if the user has already liked the post
+        if Like.objects.filter(user=request.user, post=post).exists():
+            return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new Like entry
+        Like.objects.create(user=request.user, post=post)
+        
+        # Optionally, you can create a notification here as well
+
+        return Response({'detail': 'Post liked successfully!'}, status=status.HTTP_201_CREATED)
+
+
+class UnlikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        """Unlike a post."""
+        post = get_object_or_404(Post, pk=pk)
+
+        # Check if the user has liked the post
+        like = Like.objects.filter(user=request.user, post=post).first()
+        if not like:
+            return Response({'detail': 'You have not liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Remove the Like entry
+        like.delete()
+
+        # Optionally, you can create a notification here as well
+
+        return Response({'detail': 'Post unliked successfully!'}, status=status.HTTP_200_OK)
 
 
 
