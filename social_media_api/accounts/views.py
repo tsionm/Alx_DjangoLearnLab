@@ -67,7 +67,7 @@ class LoginView(APIView):
 #         user_to_unfollow = self.get_object()
 #         request.user.following.remove(user_to_unfollow)  # Remove user from following
 #         return Response({'status': 'user unfollowed'}, status=status.HTTP_200_OK)
-class FollowUserView(APIView):
+cclass FollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
@@ -76,7 +76,7 @@ class FollowUserView(APIView):
         request.user.follow(user_to_follow)
         return Response({'detail': 'User followed successfully'}, status=status.HTTP_200_OK)
 
-class UnfollowUserView(APIView):
+class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
