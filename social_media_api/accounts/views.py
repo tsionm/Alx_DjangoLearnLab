@@ -12,32 +12,54 @@ from .serializers import UserSerializer, RegisterSerializer, LoginSerializer
 User = get_user_model()
 
 # Like a post
-class LikePostView(APIView):
+class LikePostView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
         """Like a post."""
-        post = get_object_or_404(Post, pk=pk)
+        # Fetch the post using generics.get_object_or_404
+        post = generics.get_object_or_404(Post, pk=pk)
 
-        if Like.objects.filter(user=request.user, post=post).exists():
+        # Get or create a Like entry for this user and post
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if not created:  # If the Like already exists
             return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        Like.objects.create(user=request.user, post=post)
+        # Create a notification for the like event
+        Notification.objects.create(
+            user=request.user,  # The user who performed the action
+            post=post,  # The post being liked
+            notification_type='like'  # Customize this field as per your notification logic
+        )
+
         return Response({'detail': 'Post liked successfully!'}, status=status.HTTP_201_CREATED)
 
 # Unlike a post
-class UnlikePostView(APIView):
+class UnlikePostView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
         """Unlike a post."""
-        post = get_object_or_404(Post, pk=pk)
+        # Fetch the post using generics.get_object_or_404
+        post = generics.get_object_or_404(Post, pk=pk)
+
+        # Get the like object if it exists
         like = Like.objects.filter(user=request.user, post=post).first()
 
         if not like:
             return Response({'detail': 'You have not liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Delete the Like entry
         like.delete()
+
+        # Optionally create a notification for the unlike event (if desired)
+        Notification.objects.create(
+            user=request.user,  # The user who performed the action
+            post=post,  # The post being unliked
+            notification_type='unlike'  # Customize this field as per your notification logic
+        )
+
         return Response({'detail': 'Post unliked successfully!'}, status=status.HTTP_200_OK)
 
 # User registration
