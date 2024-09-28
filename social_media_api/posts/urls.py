@@ -15,5 +15,7 @@ urlpatterns = [
     path('feed/', UserFeedView.as_view(), name='user_feed'),
     path('posts/<int:post_id>/like/', LikePostView.as_view(), name='like_post'),
     path('posts/<int:post_id>/unlike/', UnlikePostView.as_view(), name='unlike_post'),
+    path('posts/<int:pk>/like/', LikePostView.as_view(), name='like_post'),  # Updated to use <int:pk>
+    path('posts/<int:pk>/unlike/', UnlikePostView.as_view(), name='unlike_post'),  # Updated to use <int:pk>
 
 ]
