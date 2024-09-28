@@ -20,7 +20,8 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from .models import User
 from rest_framework.permissions import IsAuthenticated
-from .models import Post, Like
+# from .models import Post, Like
+from posts.models import Post, Like
 from django.contrib.auth import get_user_model
 
 
