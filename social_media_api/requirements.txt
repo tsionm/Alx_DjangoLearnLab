@@ -1,0 +1,7 @@
+# Core Django and REST Framework Packages
+Django==5.1
+djangorestframework>=3.12,<4.0
+djangorestframework-simplejwt>=5.0,<6.0
+
+# Optional for CORS handling
+django-cors-headers>=3.11,<4.0
